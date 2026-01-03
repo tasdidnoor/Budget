@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>York Engineering Budget System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #FF0000;
+        }
+
+        .nav-btn {
+            background: #222;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #FF0000, #990000);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .nav-btn:hover:not(.active) {
+            background: #333;
+        }
+
+        /* Month Selector - Dropdown Style */
+        .month-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #111;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+
+        .month-header h1 {
+            color: #FF0000;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .month-dropdown-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .month-dropdown {
+            background: #222;
+            color: white;
+            border: 1px solid #FF0000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .month-dropdown option {
+            background: #111;
+            color: white;
+            padding: 10px;
+        }
+
+        .new-month-btn {
+            background: linear-gradient(135deg, #00AA00, #006600);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .new-month-btn:hover {
+            background: linear-gradient(135deg, #00CC00, #008800);
+            transform: translateY(-2px);
+        }
+
+        /* Transaction Page */
+        .transaction-page {
+            display: none;
+        }
+
+        .page-title {
+            color: #FF0000;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        /* Transaction Form */
+        .transaction-form {
+            background: #111111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: end;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #FF0000, #990000);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        .add-btn:hover {
+            background: linear-gradient(135deg, #FF3333, #990000);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        /* Transaction List */
+        .transaction-list {
+            background: #111111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 15px;
+            background: #222;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #FFFF00;
+        }
+
+        .transaction-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            align-items: center;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .transaction-description {
+            color: #FFFFFF;
+        }
+
+        .transaction-category {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .category-tuition { background: rgba(255, 0, 0, 0.2); color: #FF6666; }
+        .category-phone { background: rgba(255, 100, 0, 0.2); color: #FF9966; }
+        .category-groceries { background: rgba(0, 255, 0, 0.2); color: #66FF66; }
+        .category-transport { background: rgba(0, 100, 255, 0.2); color: #6699FF; }
+        .category-textbooks { background: rgba(150, 0, 255, 0.2); color: #9966FF; }
+        .category-eating { background: rgba(255, 200, 0, 0.2); color: #FFCC66; }
+        .category-extra { background: rgba(255, 0, 200, 0.2); color: #FF66CC; }
+
+        .transaction-amount {
+            color: #FFFF00;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .delete-btn {
+            background: #333;
+            color: #FF6666;
+            border: 1px solid #FF6666;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            justify-self: end;
+        }
+
+        .delete-btn:hover {
+            background: #FF6666;
+            color: #000;
+        }
+
+        .total-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 15px;
+            background: #222;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 10px;
+            color: #FFFF00;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-page {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #FF0000;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #111111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            border-color: #FF0000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .card-title {
+            color: #FF0000;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title span {
+            font-size: 1rem;
+            color: #FFFF00;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #CCCCCC;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FF0000, #990000);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #FF3333, #990000);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-reset {
+            background: #333;
+        }
+
+        .btn-reset:hover {
+            background: #444;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .status-good {
+            background: rgba(0, 255, 0, 0.1);
+            color: #00FF00;
+            border: 1px solid #00FF00;
+        }
+
+        .status-warning {
+            background: rgba(255, 255, 0, 0.1);
+            color: #FFFF00;
+            border: 1px solid #FFFF00;
+        }
+
+        .status-bad {
+            background: rgba(255, 0, 0, 0.1);
+            color: #FF0000;
+            border: 1px solid #FF0000;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #CCCCCC;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #333;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF0000, #990000);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .chart-container {
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        .summary-box {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #FF0000;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #FFFF00;
+        }
+
+        .bill-reminder {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid #FFFF00;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .countdown {
+            font-size: 2rem;
+            text-align: center;
+            color: #FFFF00;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+
+        /* Month Summary Card */
+        .month-summary-card {
+            background: linear-gradient(135deg, #111, #222);
+            border: 2px solid #FF0000;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .month-summary-card h3 {
+            color: #FFFF00;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            color: #CCCCCC;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #FFFF00;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Quick Month Info */
+        .month-info {
+            color: #CCCCCC;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <button class="nav-btn active" onclick="showPage('transactions')">
+                Add Transactions
+            </button>
+            <button class="nav-btn" onclick="showPage('dashboard')">
+                View Dashboard
+            </button>
+        </div>
+
+        <!-- Month Selector Header (Visible on both pages) -->
+        <div class="month-header">
+            <h1>Monthly Budget System</h1>
+            <div class="month-dropdown-container">
+                <select id="monthDropdown" class="month-dropdown" onchange="switchMonth(this.value)">
+                    <!-- Months will be dynamically added here -->
+                </select>
+                <button class="new-month-btn" onclick="addNewMonth()">
+                    ＋ Add New Month
+                </button>
+            </div>
+            <div class="month-info" id="monthInfo">
+                <!-- Month info will appear here -->
+            </div>
+        </div>
+
+        <!-- TRANSACTION PAGE -->
+        <div id="transactions" class="transaction-page">
+            <div class="page-title" id="transactionMonthTitle">January 2024 Transactions</div>
+            
+            <!-- Transaction Form -->
+            <div class="transaction-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="e.g., Coffee at Tims, TTC pass, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category">
+                            <option value="tuition">Tuition</option>
+                            <option value="phone">Phone Bill</option>
+                            <option value="groceries">Groceries</option>
+                            <option value="transport">Transportation</option>
+                            <option value="textbooks">Textbooks & Supplies</option>
+                            <option value="eating">Eating Out</option>
+                            <option value="extra">Extra Spending</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount">Amount ($)</label>
+                        <input type="number" id="amount" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    
+                    <button class="add-btn" onclick="addTransaction()">
+                        ＋ Add to Current Month
+                    </button>
+                </div>
+            </div>
+
+            <!-- Transaction List -->
+            <div class="transaction-list">
+                <div class="list-header">
+                    <div>Description</div>
+                    <div>Category</div>
+                    <div>Amount</div>
+                    <div>Action</div>
+                </div>
+                
+                <div id="transactionsList">
+                    <!-- Transactions will appear here -->
+                </div>
+                
+                <div class="total-row">
+                    <div>Total This Month:</div>
+                    <div></div>
+                    <div id="monthlyTotal" style="text-align: right; color: #FFFF00;">$0.00</div>
+                    <div></div>
+                </div>
+            </div>
+
+            <!-- Month Summary Stats -->
+            <div class="month-summary-card">
+                <h3>This Month's Summary</h3>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Transactions</div>
+                        <div class="stat-value" id="monthTransactionCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Average Per Day</div>
+                        <div class="stat-value" id="monthDailyAverage">$0.00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Most Spent On</div>
+                        <div class="stat-value" id="monthTopCategory">None</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Remaining Budget</div>
+                        <div class="stat-value" id="monthRemainingBudget">$0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD PAGE -->
+        <div id="dashboard" class="dashboard-page">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="dashboardMonthTitle">January 2024 Dashboard</h1>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Income Card -->
+                <div class="card">
+                    <div class="card-title">
+                        INCOME
+                        <span id="incomeStatus" class="status-good">ACTIVE</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Income (After Tax)</label>
+                        <input type="number" id="monthlyIncome" value="200" min="0" step="100">
+                    </div>
+                    <div class="summary-box">
+                        <div class="summary-item">
+                            <span>Available After Needs:</span>
+                            <span id="availableAfterNeeds" class="summary-value">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fixed Expenses Card -->
+                <div class="card">
+                    <div class="card-title">
+                        FIXED EXPENSES (NEEDS)
+                        <span id="needsStatus" class="status-good">ON TRACK</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Tuition (Monthly Portion)</label>
+                        <input type="number" id="tuition" value="0" min="0" step="50" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Bill (Due 13th)</label>
+                        <input type="number" id="phoneBill" value="0" min="0" step="5" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Groceries</label>
+                        <input type="number" id="groceries" value="0" min="0" step="50" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Transportation (TTC Pass)</label>
+                        <input type="number" id="transportation" value="0" min="0" step="10" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Textbooks & Supplies</label>
+                        <input type="number" id="textbooks" value="0" min="0" step="25" readonly>
+                    </div>
+                </div>
+
+                <!-- Variable Expenses Card -->
+                <div class="card">
+                    <div class="card-title">
+                        VARIABLE EXPENSES (WANTS)
+                        <span id="wantsStatus" class="status-warning">WATCH</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Eating Out</label>
+                        <input type="number" id="eatingOut" value="0" min="0" step="25" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Extra Spending</label>
+                        <input type="number" id="extraSpending" value="0" min="0" step="25" readonly>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Wants % of Income</span>
+                            <span id="wantsPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="wantsProgress" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div id="wantsWarning" style="color: #FFFF00; font-size: 0.9rem; margin-top: 5px; display: none;">
+                            Keep wants below 15% of income
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings & Summary Card -->
+                <div class="card">
+                    <div class="card-title">
+                        SAVINGS & SUMMARY
+                        <span id="savingsStatus" class="status-good">ON TRACK</span>
+                    </div>
+                    
+                    <!-- Savings Goal -->
+                    <div class="input-group">
+                        <label>Emergency Fund Goal</label>
+                        <input type="number" id="savingsGoal" value="3000" min="0" step="500">
+                    </div>
+                    <div class="input-group">
+                        <label>Currently Saved</label>
+                        <input type="number" id="currentSavings" value="500" min="0" step="100">
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Progress to Goal</span>
+                            <span id="savingsPercent">16.7%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="savingsProgress" class="progress-fill" style="width: 16.7%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthly Summary -->
+                    <div class="summary-box">
+                        <div class="summary-item">
+                            <span>Total Income:</span>
+                            <span id="totalIncome" class="summary-value">$200</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Expenses:</span>
+                            <span id="totalExpenses" class="summary-value">$0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Remaining:</span>
+                            <span id="remainingAmount" class="summary-value">$200</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Suggested Savings:</span>
+                            <span id="suggestedSavings" class="summary-value" style="color: #00FF00;">$0</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn" onclick="calculateBudget()">Update Budget</button>
+                        <button class="btn btn-reset" onclick="resetCurrentMonth()">Reset This Month</button>
+                    </div>
+                </div>
+
+                <!-- Charts & Bill Reminder Card -->
+                <div class="card">
+                    <div class="card-title">
+                        CHARTS & BILL REMINDER
+                    </div>
+                    
+                    <!-- Bill Reminder -->
+                    <div class="bill-reminder">
+                        <div style="text-align: center; color: #FFFF00;">
+                            <h3 style="margin-bottom: 10px;">Phone Bill Due</h3>
+                            <div class="countdown" id="billCountdown">13</div>
+                            <p>Days until due on the 13th</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Placeholder -->
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: #222; padding: 15px; border-radius: 8px; text-align: center;">
+                            <div style="color: #CCCCCC; font-size: 0.9rem;">Needs</div>
+                            <div style="color: #FF0000; font-size: 1.5rem; font-weight: bold;" id="needsTotal">$0</div>
+                        </div>
+                        <div style="background: #222; padding: 15px; border-radius: 8px; text-align: center;">
+                            <div style="color: #CCCCCC; font-size: 0.9rem;">Wants</div>
+                            <div style="color: #FF3333; font-size: 1.5rem; font-weight: bold;" id="wantsTotal">$0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Global variables
+        let allMonthsData = {}; // Stores { "January 2024": { transactions: [], income: 200, savingsGoal: 3000, currentSavings: 500 } }
+        let currentMonth = "January 2026";
+        let budgetChart = null;
+        
+        // Month names for navigation
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            setupMonthDropdown();
+            showPage('transactions');
+            updateBillCountdown();
+            setInterval(updateBillCountdown, 86400000); // 24 hours
+        });
+        
+        // Load all data from localStorage
+        function loadAllData() {
+            const saved = localStorage.getItem('budgetMonthsData');
+            if (saved) {
+                allMonthsData = JSON.parse(saved);
+            }
+            
+            // Initialize current month if it doesn't exist
+            if (!allMonthsData[currentMonth]) {
+                allMonthsData[currentMonth] = {
+                    transactions: [],
+                    income: 200,
+                    savingsGoal: 3000,
+                    currentSavings: 500
+                };
+                saveAllData();
+            }
+            
+            loadCurrentMonth();
+        }
+        
+        // Save all data to localStorage
+        function saveAllData() {
+            localStorage.setItem('budgetMonthsData', JSON.stringify(allMonthsData));
+        }
+        
+        // Setup month dropdown
+        function setupMonthDropdown() {
+            const dropdown = document.getElementById('monthDropdown');
+            dropdown.innerHTML = '';
+            
+            // Get all months that have data, sorted chronologically
+            const existingMonths = Object.keys(allMonthsData).sort((a, b) => {
+                // Sort by year, then month
+                const [monthA, yearA] = a.split(' ');
+                const [monthB, yearB] = b.split(' ');
+                if (yearA !== yearB) return parseInt(yearA) - parseInt(yearB);
+                return months.indexOf(monthA) - months.indexOf(monthB);
+            });
+            
+            // If no months exist, just show current month
+            if (existingMonths.length === 0) {
+                existingMonths.push(currentMonth);
+            }
+            
+            // Add options to dropdown
+            existingMonths.forEach(month => {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = month;
+                if (month === currentMonth) {
+                    option.selected = true;
+                }
+                dropdown.appendChild(option);
+            });
+            
+            updateMonthInfo();
+        }
+        
+        // Update month info display
+        function updateMonthInfo() {
+            const monthData = allMonthsData[currentMonth];
+            const transactionCount = monthData?.transactions?.length || 0;
+            const totalSpent = monthData?.transactions?.reduce((sum, t) => sum + t.amount, 0) || 0;
+            
+            document.getElementById('monthInfo').innerHTML = `
+                ${transactionCount} transactions • Total: $${totalSpent.toFixed(2)} • 
+                ${transactionCount > 0 ? 'Data saved' : 'Add your first transaction'}
+            `;
+        }
+        
+        // Switch to a different month
+        function switchMonth(month) {
+            currentMonth = month;
+            loadCurrentMonth();
+            
+            // If on dashboard page, update it
+            if (document.getElementById('dashboard').style.display !== 'none') {
+                updateDashboardFromTransactions();
+            }
+            
+            updateMonthInfo();
+        }
+        
+        // Load current month's data
+        function loadCurrentMonth() {
+            const monthData = allMonthsData[currentMonth];
+            if (!monthData) return;
+            
+            // Update transaction list
+            renderTransactions();
+            
+            // Update dashboard inputs
+            document.getElementById('monthlyIncome').value = monthData.income || 200;
+            document.getElementById('savingsGoal').value = monthData.savingsGoal || 3000;
+            document.getElementById('currentSavings').value = monthData.currentSavings || 500;
+            
+            // Update month display
+            document.getElementById('transactionMonthTitle').textContent = currentMonth + " Transactions";
+            document.getElementById('dashboardMonthTitle').textContent = currentMonth + " Dashboard";
+            
+            // Update dropdown selection
+            const dropdown = document.getElementById('monthDropdown');
+            if (dropdown) {
+                dropdown.value = currentMonth;
+            }
+            
+            // Update dashboard
+            updateDashboardFromTransactions();
+            updateMonthInfo();
+        }
+        
+        // Add a new month
+        function addNewMonth() {
+            // Get all existing months to find the latest
+            const existingMonths = Object.keys(allMonthsData);
+            let latestMonth = "January 2026";
+            let latestYear = 2026;
+            let latestMonthIndex = 0;
+            
+            // Find the latest month
+            existingMonths.forEach(month => {
+                const [monthName, yearStr] = month.split(' ');
+                const year = parseInt(yearStr);
+                const monthIndex = months.indexOf(monthName);
+                
+                if (year > latestYear || (year === latestYear && monthIndex > latestMonthIndex)) {
+                    latestYear = year;
+                    latestMonthIndex = monthIndex;
+                    latestMonth = month;
+                }
+            });
+            
+            // Calculate next month
+            const [latestMonthName, latestYearStr] = latestMonth.split(' ');
+            const nextMonthIndex = (months.indexOf(latestMonthName) + 1) % 12;
+            const nextYear = parseInt(latestYearStr) + (nextMonthIndex === 0 ? 1 : 0);
+            const newMonthName = months[nextMonthIndex] + " " + nextYear;
+            
+            // Create new month if it doesn't exist
+            if (!allMonthsData[newMonthName]) {
+                allMonthsData[newMonthName] = {
+                    transactions: [],
+                    income: allMonthsData[latestMonth]?.income || 200, // Copy income from previous month
+                    savingsGoal: allMonthsData[latestMonth]?.savingsGoal || 3000,
+                    currentSavings: allMonthsData[latestMonth]?.currentSavings || 500
+                };
+                saveAllData();
+                setupMonthDropdown();
+            }
+            
+            // Switch to new month
+            switchMonth(newMonthName);
+        }
+        
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.transaction-page, .dashboard-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).style.display = 'block';
+            
+            // Update navigation buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.nav-btn[onclick="showPage('${pageId}')"]`).classList.add('active');
+            
+            // If showing dashboard, update it
+            if (pageId === 'dashboard') {
+                updateDashboardFromTransactions();
+            }
+        }
+        
+        // Transaction Management
+        function addTransaction() {
+            const description = document.getElementById('description').value.trim();
+            const category = document.getElementById('category').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            if (!description || isNaN(amount) || amount <= 0) {
+                alert('Please enter a description and valid amount.');
+                return;
+            }
+            
+            const transaction = {
+                id: Date.now(), // Unique ID
+                description: description,
+                category: category,
+                amount: amount,
+                date: new Date().toLocaleDateString('en-CA') // YYYY-MM-DD format
+            };
+            
+            // Add to current month's transactions
+            allMonthsData[currentMonth].transactions.push(transaction);
+            saveAllData();
+            renderTransactions();
+            
+            // Clear form
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+            
+            // Auto-switch to dashboard after adding
+            showPage('dashboard');
+        }
+        
+        function deleteTransaction(id) {
+            allMonthsData[currentMonth].transactions = 
+                allMonthsData[currentMonth].transactions.filter(t => t.id !== id);
+            saveAllData();
+            renderTransactions();
+            updateDashboardFromTransactions();
+            updateMonthInfo();
+        }
+        
+        function renderTransactions() {
+            const container = document.getElementById('transactionsList');
+            container.innerHTML = '';
+            
+            const monthData = allMonthsData[currentMonth];
+            const transactions = monthData?.transactions || [];
+            let total = 0;
+            
+            // Calculate category totals for summary
+            const categoryTotals = {};
+            const categoryNames = {
+                'tuition': 'Tuition',
+                'phone': 'Phone Bill',
+                'groceries': 'Groceries',
+                'transport': 'Transportation',
+                'textbooks': 'Textbooks',
+                'eating': 'Eating Out',
+                'extra': 'Extra Spending'
+            };
+            
+            transactions.forEach(transaction => {
+                total += transaction.amount;
+                
+                // Track category total
+                if (!categoryTotals[transaction.category]) {
+                    categoryTotals[transaction.category] = 0;
+                }
+                categoryTotals[transaction.category] += transaction.amount;
+                
+                // Create transaction item
+                const categoryClass = `category-${transaction.category}`;
+                const item = document.createElement('div');
+                item.className = 'transaction-item';
+                item.innerHTML = `
+                    <div class="transaction-description">
+                        <div>${transaction.description}</div>
+                        <div style="font-size: 0.8rem; color: #888;">${transaction.date}</div>
+                    </div>
+                    <div class="transaction-category ${categoryClass}">
+                        ${categoryNames[transaction.category]}
+                    </div>
+                    <div class="transaction-amount">
+                        $${transaction.amount.toFixed(2)}
+                    </div>
+                    <button class="delete-btn" onclick="deleteTransaction(${transaction.id})">
+                        Delete
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+            
+            // Update totals
+            document.getElementById('monthlyTotal').textContent = `$${total.toFixed(2)}`;
+            
+            // Update summary stats
+            updateMonthSummary(transactions, total, categoryTotals);
+        }
+        
+        // Update month summary statistics
+        function updateMonthSummary(transactions, total, categoryTotals) {
+            const transactionCount = transactions.length;
+            document.getElementById('monthTransactionCount').textContent = transactionCount;
+            
+            // Calculate daily average (assuming 30 days in month)
+            const dailyAverage = transactionCount > 0 ? total / 30 : 0;
+            document.getElementById('monthDailyAverage').textContent = `$${dailyAverage.toFixed(2)}`;
+            
+            // Find top spending category
+            let topCategory = 'None';
+            let topAmount = 0;
+            for (const [category, amount] of Object.entries(categoryTotals)) {
+                if (amount > topAmount) {
+                    topAmount = amount;
+                    topCategory = category;
+                }
+            }
+            
+            const categoryDisplayNames = {
+                'tuition': 'Tuition',
+                'phone': 'Phone',
+                'groceries': 'Groceries',
+                'transport': 'Transport',
+                'textbooks': 'Textbooks',
+                'eating': 'Eating Out',
+                'extra': 'Extra'
+            };
+            
+            document.getElementById('monthTopCategory').textContent = 
+                topCategory !== 'None' ? categoryDisplayNames[topCategory] : 'None';
+            
+            // Calculate remaining budget
+            const income = allMonthsData[currentMonth]?.income || 0;
+            const remaining = income - total;
+            document.getElementById('monthRemainingBudget').textContent = `$${remaining.toFixed(2)}`;
+        }
+        
+        // Update dashboard based on transactions
+        function updateDashboardFromTransactions() {
+            const monthData = allMonthsData[currentMonth];
+            if (!monthData) return;
+            
+            // Save current income and savings values
+            monthData.income = parseFloat(document.getElementById('monthlyIncome').value) || 200;
+            monthData.savingsGoal = parseFloat(document.getElementById('savingsGoal').value) || 3000;
+            monthData.currentSavings = parseFloat(document.getElementById('currentSavings').value) || 500;
+            saveAllData();
+            
+            // Reset all category totals
+            const categoryTotals = {
+                tuition: 0,
+                phone: 0,
+                groceries: 0,
+                transport: 0,
+                textbooks: 0,
+                eating: 0,
+                extra: 0
+            };
+            
+            // Sum up transactions by category
+            monthData.transactions.forEach(transaction => {
+                categoryTotals[transaction.category] += transaction.amount;
+            });
+            
+            // Update dashboard inputs
+            document.getElementById('tuition').value = categoryTotals.tuition;
+            document.getElementById('phoneBill').value = categoryTotals.phone;
+            document.getElementById('groceries').value = categoryTotals.groceries;
+            document.getElementById('transportation').value = categoryTotals.transport;
+            document.getElementById('textbooks').value = categoryTotals.textbooks;
+            document.getElementById('eatingOut').value = categoryTotals.eating;
+            document.getElementById('extraSpending').value = categoryTotals.extra;
+            
+            // Recalculate budget
+            calculateBudget();
+        }
+        
+        // Budget calculations
+        function calculateBudget() {
+            // Get input values
+            const income = parseFloat(document.getElementById('monthlyIncome').value) || 0;
+            const tuition = parseFloat(document.getElementById('tuition').value) || 0;
+            const phone = parseFloat(document.getElementById('phoneBill').value) || 0;
+            const groceries = parseFloat(document.getElementById('groceries').value) || 0;
+            const transport = parseFloat(document.getElementById('transportation').value) || 0;
+            const books = parseFloat(document.getElementById('textbooks').value) || 0;
+            const eatingOut = parseFloat(document.getElementById('eatingOut').value) || 0;
+            const extra = parseFloat(document.getElementById('extraSpending').value) || 0;
+            const savingsGoal = parseFloat(document.getElementById('savingsGoal').value) || 0;
+            const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0;
+            
+            // Calculate totals
+            const totalNeeds = tuition + phone + groceries + transport + books;
+            const totalWants = eatingOut + extra;
+            const totalExpenses = totalNeeds + totalWants;
+            const remaining = income - totalExpenses;
+            const availableAfterNeeds = income - totalNeeds;
+            
+            // Calculate percentages
+            const wantsPercent = income > 0 ? (totalWants / income) * 100 : 0;
+            const savingsPercent = savingsGoal > 0 ? (currentSavings / savingsGoal) * 100 : 0;
+            const suggestedSavings = remaining > 0 ? remaining * 0.2 : 0; // Suggest saving 20%
+            
+            // Update display values
+            document.getElementById('totalIncome').textContent = formatCurrency(income);
+            document.getElementById('totalExpenses').textContent = formatCurrency(totalExpenses);
+            document.getElementById('remainingAmount').textContent = formatCurrency(remaining);
+            document.getElementById('suggestedSavings').textContent = formatCurrency(suggestedSavings);
+            document.getElementById('availableAfterNeeds').textContent = formatCurrency(availableAfterNeeds);
+            document.getElementById('needsTotal').textContent = formatCurrency(totalNeeds);
+            document.getElementById('wantsTotal').textContent = formatCurrency(totalWants);
+            
+            // Update progress bars
+            document.getElementById('wantsPercent').textContent = wantsPercent.toFixed(1) + '%';
+            document.getElementById('wantsProgress').style.width = Math.min(wantsPercent, 100) + '%';
+            
+            document.getElementById('savingsPercent').textContent = savingsPercent.toFixed(1) + '%';
+            document.getElementById('savingsProgress').style.width = Math.min(savingsPercent, 100) + '%';
+            
+            // Update status indicators
+            updateStatusIndicators(income, remaining, wantsPercent, totalWants, totalNeeds);
+            
+            // Update chart
+            updateChart(totalNeeds, totalWants, remaining);
+        }
+        
+        // Update status indicators with colors
+        function updateStatusIndicators(income, remaining, wantsPercent, totalWants, totalNeeds) {
+            // Income status
+            const incomeStatus = document.getElementById('incomeStatus');
+            incomeStatus.textContent = income > 0 ? 'ACTIVE' : 'NO INCOME';
+            incomeStatus.className = income > 0 ? 'status-indicator status-good' : 'status-indicator status-bad';
+            
+            // Needs status
+            const needsStatus = document.getElementById('needsStatus');
+            const needsPercent = income > 0 ? (totalNeeds / income) * 100 : 0;
+            if (needsPercent <= 50) {
+                needsStatus.textContent = 'ON TRACK';
+                needsStatus.className = 'status-indicator status-good';
+            } else if (needsPercent <= 70) {
+                needsStatus.textContent = 'WATCH';
+                needsStatus.className = 'status-indicator status-warning';
+            } else {
+                needsStatus.textContent = 'HIGH';
+                needsStatus.className = 'status-indicator status-bad';
+            }
+            
+            // Wants status
+            const wantsStatus = document.getElementById('wantsStatus');
+            const wantsWarning = document.getElementById('wantsWarning');
+            if (wantsPercent <= 10) {
+                wantsStatus.textContent = 'LOW';
+                wantsStatus.className = 'status-indicator status-good';
+                wantsWarning.style.display = 'none';
+            } else if (wantsPercent <= 15) {
+                wantsStatus.textContent = 'WATCH';
+                wantsStatus.className = 'status-indicator status-warning';
+                wantsWarning.style.display = 'block';
+            } else {
+                wantsStatus.textContent = 'HIGH';
+                wantsStatus.className = 'status-indicator status-bad';
+                wantsWarning.style.display = 'block';
+            }
+            
+            // Savings status
+            const savingsStatus = document.getElementById('savingsStatus');
+            if (remaining > 0) {
+                savingsStatus.textContent = 'ON TRACK';
+                savingsStatus.className = 'status-indicator status-good';
+            } else {
+                savingsStatus.textContent = 'DEFICIT';
+                savingsStatus.className = 'status-indicator status-bad';
+            }
+        }
+        
+        // Update bill countdown
+        function updateBillCountdown() {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const currentMonthIndex = today.getMonth();
+            let dueDate = new Date(currentYear, currentMonthIndex, 13);
+            
+            // If 13th has passed this month, use next month
+            if (today.getDate() > 13) {
+                dueDate = new Date(currentYear, currentMonthIndex + 1, 13);
+            }
+            
+            const diffTime = dueDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('billCountdown').textContent = diffDays;
+            
+            // Color code based on days left
+            const countdownElement = document.getElementById('billCountdown');
+            if (diffDays <= 0) {
+                countdownElement.style.color = '#FF0000';
+            } else if (diffDays <= 3) {
+                countdownElement.style.color = '#FFFF00';
+            } else {
+                countdownElement.style.color = '#00FF00';
+            }
+        }
+        
+        // Create/update chart
+        function updateChart(needs, wants, remaining) {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (budgetChart) {
+                budgetChart.destroy();
+            }
+            
+            budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Needs', 'Wants', 'Remaining'],
+                    datasets: [{
+                        data: [needs, wants, remaining > 0 ? remaining : 0],
+                        backgroundColor: [
+                            '#FF0000',  // Needs - Red
+                            '#FF6666',  // Wants - Light Red
+                            '#00FF00'   // Remaining - Green
+                        ],
+                        borderColor: '#000000',
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#FFFFFF',
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += formatCurrency(context.raw);
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Reset current month's data
+        function resetCurrentMonth() {
+            if (confirm(`Reset all data for ${currentMonth}? This cannot be undone.`)) {
+                allMonthsData[currentMonth] = {
+                    transactions: [],
+                    income: 200,
+                    savingsGoal: 3000,
+                    currentSavings: 500
+                };
+                saveAllData();
+                loadCurrentMonth();
+            }
+        }
+        
+        // Helper function to format currency
+        function formatCurrency(amount) {
+            return '$' + amount.toFixed(2);
+        }
+        
+        // Auto-calculate when inputs change
+        const inputs = document.querySelectorAll('#monthlyIncome, #savingsGoal, #currentSavings');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Save to current month's data
+                const monthData = allMonthsData[currentMonth];
+                if (monthData) {
+                    if (this.id === 'monthlyIncome') {
+                        monthData.income = parseFloat(this.value) || 200;
+                    } else if (this.id === 'savingsGoal') {
+                        monthData.savingsGoal = parseFloat(this.value) || 3000;
+                    } else if (this.id === 'currentSavings') {
+                        monthData.currentSavings = parseFloat(this.value) || 500;
+                    }
+                    saveAllData();
+                }
+                calculateBudget();
+            });
+        });
+    </script>
+</body>
+</html>
