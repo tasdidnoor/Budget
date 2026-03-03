@@ -3,12 +3,13 @@
 A clean, straightforward web application for tracking your income and expenses. This tool helps you manage your finances with a simple, intuitive interface.
 
 ### 🌐 Live Demo
-*(Link to your live demo, e.g., `tasdidnoor.com/Budget`)*
+**[tasdidnoor.com/Budget](https://tasdidnoor.com/Budget)**
 
 ### 📸 Screenshots
-![Screenshot 1](https://tasdidnoor.com/Assets/Budget/screenshot1.png)
-![Screenshot 2](https://tasdidnoor.com/Assets/Budget/screenshot2.png)
-*(Note: Please update `screenshot1.png` and `screenshot2.png` to your actual filenames)*
+![Screenshot 1](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README1.png)
+![Screenshot 2](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README2.png)
+![Screenshot 2](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README3.png)
+![Screenshot 2](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README4.png)
 
 ## 🚀 Features
 
