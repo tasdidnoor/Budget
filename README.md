@@ -8,8 +8,8 @@ A clean, straightforward web application for tracking your income and expenses. 
 ### 📸 Screenshots
 ![Screenshot 1](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README1.png)
 ![Screenshot 2](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README2.png)
-![Screenshot 2](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README3.png)
-![Screenshot 2](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README4.png)
+![Screenshot 3](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README3.png)
+![Screenshot 4](https://raw.githubusercontent.com/tasdidnoor/Assets/main/Budget/README4.png)
 
 ## 🚀 Features
 
