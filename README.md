@@ -23,7 +23,7 @@ A clean, straightforward web application for tracking your income and expenses. 
 To use this locally:
 1. Clone the repository:
    ```bash
-   git clone <your-budget-repo-url>
+   git clone https://github.com/tasdidnoor/Budget
    ```
 2. Open `index.html` in any modern web browser.
 
