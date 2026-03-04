@@ -16,6 +16,7 @@ A clean, straightforward web application for tracking your income and expenses. 
 - **Transaction Logging:** Easily add and categorize your income and expenses.
 - **Visual Overview:** See a clear summary of your current financial balance.
 - **Persistent Storage:** Your budget data is saved in the browser's local storage.
+- **Privacy Focused:** You data stays in your browser, no privacy concerns.
 - **Clean UI:** A minimalist design to keep you focused on your finances.
 
 ## 🛠️ Getting Started
